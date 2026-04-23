@@ -35,7 +35,7 @@ python3 -m venv "$VENV_DIR"
 
 # Keep app running in background and persist logs for debugging ALB health checks.
 pkill -f "app.py" || true
-nohup "$VENV_DIR/bin/python" -u app.py > /var/log/python-api.log 2>&1 &
+nohup "$VENV_DIR/bin/python" -u -c "from app import app; app.run(host='0.0.0.0', port=5000, debug=False)" > /var/log/python-api.log 2>&1 &
 
 # Quick local health probe for cloud-init log visibility.
 sleep 5
