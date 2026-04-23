@@ -3,6 +3,10 @@ set -euo pipefail
 
 APP_DIR="/home/ubuntu/python-mysql-db-sample-devops"
 VENV_DIR="/home/ubuntu/python-mysql-db-sample-devops/.venv"
+DB_HOST="${rds_endpoint}"
+DB_USER="${db_user}"
+DB_PASSWORD="${db_password}"
+DB_NAME="${db_name}"
 
 exec > >(tee -a /var/log/user-data.log) 2>&1
 
@@ -18,6 +22,13 @@ else
 fi
 
 cd "$APP_DIR"
+
+# Override repo defaults with runtime infrastructure values.
+sed -i -E "s#host='[^']*'#host='$${DB_HOST}'#" app.py
+sed -i -E "s#user='[^']*'#user='$${DB_USER}'#" app.py
+sed -i -E "s#password='[^']*'#password='$${DB_PASSWORD}'#" app.py
+sed -i -E "s#db='[^']*'#db='$${DB_NAME}'#" app.py
+
 python3 -m venv "$VENV_DIR"
 "$VENV_DIR/bin/pip" install --upgrade pip
 "$VENV_DIR/bin/pip" install -r requirements.txt
