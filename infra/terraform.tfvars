@@ -1,4 +1,4 @@
-bucket_name = "dev-proj-1-remote-state-bucket"
+bucket_name = "dev-proj-1-jenkins-remote-state-bucket-713205"
 name        = "environment"
 environment = "dev-1"
 
