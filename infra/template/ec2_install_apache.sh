@@ -1,13 +1,22 @@
-#! /bin/bash
-# shellcheck disable=SC2164
+#!/bin/bash
+set -euo pipefail
+
+APP_DIR="/home/ubuntu/python-mysql-db-sample-devops"
+
 cd /home/ubuntu
-yes | sudo apt update
-yes | sudo apt install python3 python3-pip
-git clone https://github.com/ArnabAdhikar/python-mysql-db-sample-devops.git
-sleep 20
-# shellcheck disable=SC2164
-cd python-mysql-db-sample-devops
+apt-get update -y
+apt-get install -y git python3 python3-pip
+
+if [ -d "$APP_DIR/.git" ]; then
+	cd "$APP_DIR"
+	git pull --ff-only
+else
+	git clone https://github.com/ArnabAdhikar/python-mysql-db-sample-devops.git "$APP_DIR"
+fi
+
+cd "$APP_DIR"
 pip3 install -r requirements.txt
-echo 'Waiting for 30 seconds before running the app.py'
-setsid python3 -u app.py &
-sleep 30
+
+# Keep app running in background and persist logs for debugging ALB health checks.
+pkill -f "python3 -u app.py" || true
+nohup python3 -u app.py > /var/log/python-api.log 2>&1 &

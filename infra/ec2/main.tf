@@ -28,6 +28,7 @@ resource "aws_instance" "dev_proj_1_ec2" {
   associate_public_ip_address = var.enable_public_ip_address
 
   user_data = var.user_data_install_apache
+  user_data_replace_on_change = true
 
   metadata_options {
     http_endpoint = "enabled"  # Enable the IMDSv2 endpoint
