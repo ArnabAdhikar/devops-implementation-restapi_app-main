@@ -12,7 +12,7 @@ exec > >(tee -a /var/log/user-data.log) 2>&1
 
 cd /home/ubuntu
 apt-get update -y
-apt-get install -y git python3 python3-pip python3-venv
+apt-get install -y git python3 python3-pip python3-venv mysql-client
 
 if [ -d "$APP_DIR/.git" ]; then
 	cd "$APP_DIR"
@@ -32,6 +32,14 @@ sed -i -E "s#db='[^']*'#db='$${DB_NAME}'#" app.py
 python3 -m venv "$VENV_DIR"
 "$VENV_DIR/bin/pip" install --upgrade pip
 "$VENV_DIR/bin/pip" install -r requirements.txt
+
+# Ensure application table exists before serving requests.
+mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASSWORD" "$DB_NAME" <<'SQL'
+CREATE TABLE IF NOT EXISTS example_table (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+SQL
 
 # Keep app running in background and persist logs for debugging ALB health checks.
 pkill -f "app.py" || true
