@@ -15,7 +15,7 @@ pipeline {
 
                 // Clone the Git repository
                 git branch: 'main',
-                    url: 'https://github.com/ArnabAdhikar/python-mysql-db-sample-devops.git'
+                    url: 'https://github.com/ArnabAdhikar/devops-implementation-restapi_app-main.git'
 
                 sh "ls -lart"
             }
